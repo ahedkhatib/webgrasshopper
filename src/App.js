@@ -1,25 +1,24 @@
-import logo from './logo.svg';
+import React from 'react';
+import ReactFlowComponent from './components/ReactFlowComponent';
+import OpenCascadeViewer from './components/OpenCascadeViewer';
 import './App.css';
+import { NodesProvider } from './context/NodesContext';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  <NodesProvider>
+    <div className="container">
+      <div className="half">
+        <ReactFlowComponent />
+      </div>
+      <div className="half">
+        <OpenCascadeViewer/>
+      </div>
     </div>
+  </NodesProvider>
   );
-}
+};
 
 export default App;
+
+
