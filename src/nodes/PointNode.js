@@ -21,6 +21,27 @@ function PointNode({ id, data }) {
               updateNodeValue(targetNode.id, `z${inputIndex}`, data.z);
             }
           }
+          if (targetNode && targetNode.type === 'circle') {
+            const targetHandle = edge.targetHandle;
+            if (targetHandle === 'plane') {
+              updateNodeValue(targetNode.id, `plane`, [data.x, data.y, data.z]);
+            }
+          }
+          if (targetNode && targetNode.type === 'box') {
+            const targetHandle = edge.targetHandle;
+            if (targetHandle === 'pointA') {
+              updateNodeValue(targetNode.id, `pointA`, [data.x, data.y, data.z]);
+            }
+            if (targetHandle === 'pointB') {
+              updateNodeValue(targetNode.id, `pointB`, [data.x, data.y, data.z]);
+            }
+          }
+          if (targetNode && targetNode.type === 'sphere') {
+            const targetHandle = edge.targetHandle;
+            if (targetHandle === 'center') {
+              updateNodeValue(targetNode.id, `center`, [data.x, data.y, data.z]);
+            }
+          }
         }
       });
       setPrevData({ x: data.x, y: data.y, z: data.z });

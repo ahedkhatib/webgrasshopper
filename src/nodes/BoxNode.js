@@ -22,19 +22,17 @@ function BoxNode({ id, data }) {
       }
     });
   }, [edges, nodes, id]);
-
+  
   useEffect(() => {
-    updateNodeValue(id, 'pointA', pointA);
-    updateNodeValue(id, 'pointB', pointB);
-  }, [pointA, pointB, id, updateNodeValue]);
+  }, [data]);
 
   return (
     <div className={styles.customNode}>
       <div>Box Node</div>
       <div>Point A</div>
       <div>Point B</div>
-      <Handle type="target" position="left" id="pointA" style={{ top: 40 }} />
-      <Handle type="target" position="left" id="pointB" style={{ top: 70 }} />
+      <Handle type="target" position="left" id="pointA" style={{ top: 20 }} />
+      <Handle type="target" position="left" id="pointB" style={{ top: 60 }} />
       <Handle type="source" position="right" id="output" style={{ right: 0, top: '50%' }} />
     </div>
   );

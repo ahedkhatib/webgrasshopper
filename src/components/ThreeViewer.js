@@ -116,6 +116,22 @@ const OpenCascadeViewer = () => {
         );
         scene.add(box);
       }
+      else if ( node.type === 'cylinder') {
+        const { radius, height, center} = node.data;
+        const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+        const cylinder = new THREE.Mesh(geometry, material);
+        cylinder.position.set(center[0], center[1], center[2] + height / 2); // המרכזת את הגליל בנקודה
+        scene.add(cylinder);
+      }
+      else if (node.type === 'sphere') {
+        const { radius, center } = node.data;
+        const geometry = new THREE.SphereGeometry(radius, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(center[0], center[1], center[2]);
+        scene.add(sphere);
+      }
     });
 
     const axesHelper = new THREE.AxesHelper(10);

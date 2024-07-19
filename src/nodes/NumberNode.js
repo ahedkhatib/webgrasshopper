@@ -4,8 +4,9 @@ import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
 
 function NumberNode({id, data }) {
-  const { edges, updateNodeValue} = useContext(NodesContext)
+  const { edges, updateNodeValue, nodes} = useContext(NodesContext)
   const [value, setValue] = useState(data.value || 0);
+  const [prevData, setPrevData] = useState({value: data.value});
   const [inputOptions, setInputOptions] = useState({
     min: data.min || 0,
     max: data.max || 10,
@@ -32,12 +33,31 @@ function NumberNode({id, data }) {
   }, [open]);
 
   useEffect(() => {
-    edges.forEach((edge) => {
-      if (edge.source === id) {
-        updateNodeValue(edge.target, edge.targetHandle, value);
-      }
-    });
-  }, [value, data, edges, updateNodeValue, id]);
+    if (prevData.value != data.value) {
+      edges.forEach((edge) => {
+        if (edge.source === id) {
+          const targetNode = nodes.find((n) => n.id === edge.target);
+          if (targetNode && targetNode.type === 'circle') {
+            const targetHandle = edge.targetHandle;
+            if (targetHandle === 'radius') {
+              updateNodeValue(targetNode.id, 'radius', data.value);
+            }
+          }
+          if (targetNode && targetNode.type === 'sphere') {
+            const targetHandle = edge.targetHandle;
+            if (targetHandle === 'radius') {
+              updateNodeValue(targetNode.id, 'radius', data.value);
+            }
+          }
+          if (targetNode && targetNode.type === 'point') {
+            const targetHandle = edge.targetHandle;
+            updateNodeValue(targetNode.id, targetHandle, data.value);
+          }
+        }
+      });
+      setPrevData({value: data.value});
+    }
+  }, [data.value, edges, id, nodes, updateNodeValue, prevData]);
 
   const handleChange = (event) => {
     const newValue = parseInt(event.target.value, 10);

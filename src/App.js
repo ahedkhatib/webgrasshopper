@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactFlowComponent from './components/ReactFlowComponent';
-import OpenCascadeViewer from './components/OpenCascadeViewer';
+import OpenCascadeViewer from './components/ThreeViewer';
 import './App.css';
 import { NodesProvider } from './context/NodesContext';
 
