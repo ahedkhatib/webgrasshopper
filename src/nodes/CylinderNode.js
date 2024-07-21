@@ -45,7 +45,7 @@ function CylinderNode({ id, data }) {
       <div>Cylinder Node</div>
       <div>Radius: {radius}</div>
       <div>Height: {height}</div>
-      <div>Center: {`(${center[0]}, ${center[1]}, ${center[2]})`}</div>
+      <div>Center</div>
       <Handle type="target" position="left" id="radius" style={{ top: 70 }} />
       <Handle type="target" position="left" id="height" style={{ top: 90 }} />
       <Handle type="target" position="left" id="center" style={{ top: 110 }} />
