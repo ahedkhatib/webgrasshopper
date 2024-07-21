@@ -33,7 +33,7 @@ function NumberNode({id, data }) {
   }, [open]);
 
   useEffect(() => {
-    if (prevData.value != data.value) {
+    if (prevData.value !== data.value) {
       edges.forEach((edge) => {
         if (edge.source === id) {
           const targetNode = nodes.find((n) => n.id === edge.target);
@@ -50,6 +50,10 @@ function NumberNode({id, data }) {
             }
           }
           if (targetNode && targetNode.type === 'point') {
+            const targetHandle = edge.targetHandle;
+            updateNodeValue(targetNode.id, targetHandle, data.value);
+          }
+          if (targetNode && (targetNode.type === 'addition' ||targetNode.type === 'multiplication') ) {
             const targetHandle = edge.targetHandle;
             updateNodeValue(targetNode.id, targetHandle, data.value);
           }

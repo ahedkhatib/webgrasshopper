@@ -9,6 +9,8 @@ import BoxNode from '../nodes/BoxNode';
 import DecimalNode from '../nodes/DecimalNode';
 import CylinderNode from '../nodes/CylinderNode';
 import SphereNode from '../nodes/SphereNode';
+import AdditionNode from '../nodes/AdditionNode';
+import MultiplicationNode from '../nodes/MultiplicationNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
 
@@ -29,6 +31,8 @@ const nodeTypes = {
     decimal: DecimalNode,
     cylinder: CylinderNode,
     sphere: SphereNode,
+    addition: AdditionNode,
+    multiplication: MultiplicationNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -231,6 +235,43 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addAdditionNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'addition',
+      data: {
+        x: 0,
+        y: 0,
+        result: 0,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addMultiplicationNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'multiplication',
+      data: {
+        x: 1,
+        y: 1,
+        result: 1,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+
   const onConnect = useCallback((params) => {
     setEdges((eds) => addEdge(params, eds));
     setNodes((nds) =>
@@ -307,6 +348,12 @@ function FlowComponent() {
                 node.data.radius = sourceData.value;
               }
             }
+            if (node.type === 'addition' ) {
+              updateNodeValue(node.id, targetHandle, sourceData.value !== undefined ? sourceData.value : 0);
+            }
+            if (node.type === 'multiplication' ) {
+              updateNodeValue(node.id, targetHandle, sourceData.value !== undefined ? sourceData.value : 1);
+            }
           }
           
         }
@@ -362,6 +409,16 @@ function FlowComponent() {
               } else if (targetHandle === 'z') {
                 node.data = { ...node.data, z: 0 };
               }
+            } else if (node.type === 'addition') {
+              if (targetHandle === 'x') {
+                //console.log("delete");
+                node.data = { ...node.data, x: 0 };
+                //console.log("updatex :", node.data.x);
+              } else if (targetHandle === 'y') {
+                node.data = { ...node.data, y: 0 };
+              }
+            } else if (node.type === 'multiplication') {
+              node.data = { ...node.data, [targetHandle]: 1 };
             }
           }
         });
@@ -370,8 +427,7 @@ function FlowComponent() {
     );
   }, [setEdges, setNodes]);
 
-
-
+  
   return (
     <div style={{ width: '100%', height: '100vh' }}>
       <ReactFlow
@@ -414,6 +470,12 @@ function FlowComponent() {
         </button>
         <button onClick={addSphereNode} className="btn-add">
           Sphere
+        </button>
+        <button onClick={addAdditionNode} className="btn-add">
+          Addition
+        </button>
+        <button onClick={addMultiplicationNode} className="btn-add">
+          Multiplication
         </button>
       </div>
     </div>
