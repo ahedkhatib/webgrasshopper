@@ -41,6 +41,14 @@ function PointNode({ id, data }) {
             if (targetHandle === 'center') {
               updateNodeValue(targetNode.id, `center`, [data.x, data.y, data.z]);
             }
+          } else if (targetNode.type === 'polyline') {
+            const connectedPoints = edges
+              .filter(edge => edge.target === targetNode.id)
+              .map(edge => nodes.find(n => n.id === edge.source && n.type === 'point'))
+              .filter(n => n)
+              .map(n => [n.data.x, n.data.y, n.data.z]);
+            
+            updateNodeValue(targetNode.id, 'points', connectedPoints);
           }
         }
       });

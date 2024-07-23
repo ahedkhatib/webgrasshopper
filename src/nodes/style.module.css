@@ -26,3 +26,76 @@
   cursor: pointer;
   font-size: 1.2em;
 }
+
+.clock {
+  text-align: center;
+  padding: 10px;
+}
+
+.clockFace {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border: 2px solid black;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  background: white;
+  transform: rotate(-90deg);
+}
+
+.clockHand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 50%;
+  transform: rotate(0deg);
+  transition: transform 0.5s ease-in-out;
+}
+
+.hourHand {
+  height: 2%; 
+  width: 40%;
+  background: black;
+}
+
+.minuteHand {
+  height: 2%;
+  width: 50%;
+  background: black;
+}
+
+.secondHand {
+  height: 5%;
+  width: 50%;
+  background: red; 
+}
+
+.calender {
+  padding: 0;
+}
+
+.calenderFace {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  border: 2px solid black;
+  border-radius: 5px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.booleanNode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.polylineNode {
+ text-align: center;
+ font-weight: bold; 
+}

@@ -121,7 +121,7 @@ const OpenCascadeViewer = () => {
         const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
         const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
         const cylinder = new THREE.Mesh(geometry, material);
-        cylinder.position.set(center[0], center[1], center[2] + height / 2); // המרכזת את הגליל בנקודה
+        cylinder.position.set(center[0], center[1], center[2] + height / 2); 
         scene.add(cylinder);
       }
       else if (node.type === 'sphere') {
@@ -131,6 +131,15 @@ const OpenCascadeViewer = () => {
         const sphere = new THREE.Mesh(geometry, material);
         sphere.position.set(center[0], center[1], center[2]);
         scene.add(sphere);
+      } else if (node.type === 'polyline') {
+        const { points } = node.data;
+        if(points.length > 1) {
+          const polylinePoints = points.map (point => new THREE.Vector3(point[0], point[1], point[2]));
+          const polylineGeometry = new THREE.BufferGeometry().setFromPoints(polylinePoints);
+          const polylineMaterial = new THREE.LineBasicMaterial({ color: 0xff00ff });
+          const polyline = new THREE.Line(polylineGeometry, polylineMaterial);
+          scene.add(polyline);
+        }
       }
     });
 

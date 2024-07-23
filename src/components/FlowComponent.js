@@ -11,6 +11,10 @@ import CylinderNode from '../nodes/CylinderNode';
 import SphereNode from '../nodes/SphereNode';
 import AdditionNode from '../nodes/AdditionNode';
 import MultiplicationNode from '../nodes/MultiplicationNode';
+import ClockNode from '../nodes/ClockNode';
+import CalenderNode from '../nodes/CalenderNode';
+import BooleanNode from '../nodes/BooleanNode';
+import PolylineNode from '../nodes/PolylineNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
 
@@ -33,6 +37,10 @@ const nodeTypes = {
     sphere: SphereNode,
     addition: AdditionNode,
     multiplication: MultiplicationNode,
+    clock: ClockNode,
+    calender: CalenderNode,
+    boolean: BooleanNode,
+    polyline: PolylineNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -271,6 +279,76 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addClockNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'clock',
+      data: {},
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addCalenderNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'calender',
+      data: {},
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addBooleanNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'boolean',
+      data: {
+        boolean: false,
+      onChange: (value) => {
+        setNodes((nds) =>
+          nds.map((node) => {
+            if (node.id === id) {
+              return { ...node, data: { ...node.data, boolean: value } };
+            }
+            return node;
+          })
+        );
+      },
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addPolylineNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'polyline',
+      data: {
+        points: [],
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
 
   const onConnect = useCallback((params) => {
     setEdges((eds) => addEdge(params, eds));
@@ -355,15 +433,25 @@ function FlowComponent() {
               updateNodeValue(node.id, targetHandle, sourceData.value !== undefined ? sourceData.value : 1);
             }
           }
+          if (node.type === 'polyline') {
+            const connectedPoints = edges
+              .filter(edge => edge.target === node.id)
+              .map(edge => nds.find(n => n.id === edge.source && n.type === 'point'))
+              .filter(n => n)
+              .map(n => [n.data.x, n.data.y, n.data.z]);
+  
+            node.data = { ...node.data, points: connectedPoints };
+          }
           
         }
         return node;
       })
     );
-  }, [setEdges, setNodes, updateNodeValue]);
+  }, [setEdges, setNodes, updateNodeValue, edges]);
 
   const onEdgesDelete = useCallback((deletedEdges) => {
-    setEdges((eds) => eds.filter((edge) => !deletedEdges.includes(edge)));
+    setEdges((eds) => 
+      { const updatedEdges = eds.filter((edge) => !deletedEdges.includes(edge));
     setNodes((nds) =>
       nds.map((node) => {
         deletedEdges.forEach((edge) => {
@@ -419,13 +507,26 @@ function FlowComponent() {
               }
             } else if (node.type === 'multiplication') {
               node.data = { ...node.data, [targetHandle]: 1 };
+            } else if (node.type === 'polyline') {
+              const connectedPoints = updatedEdges
+              .filter(edge => edge.target === node.id)
+              .map(edge => nodes.find(n => n.id === edge.source && n.type === 'point'))
+              .filter(n => n)
+              .map(n => [n.data.x, n.data.y, n.data.z]);
+
+            node.data = { ...node.data, points: connectedPoints };
+
             }
+
           }
         });
         return node;
       })
     );
-  }, [setEdges, setNodes]);
+
+    return updatedEdges;
+  });
+  }, [setEdges, setNodes, nodes]);
 
   
   return (
@@ -476,6 +577,18 @@ function FlowComponent() {
         </button>
         <button onClick={addMultiplicationNode} className="btn-add">
           Multiplication
+        </button>
+        <button onClick={addClockNode} className="btn-add">
+          Clock
+        </button>
+        <button onClick={addCalenderNode} className="btn-add">
+          Calender
+        </button>
+        <button onClick={addBooleanNode} className="btn-add">
+          Boolean
+        </button>
+        <button onClick={addPolylineNode} className="btn-add">
+          Polyline
         </button>
       </div>
     </div>
