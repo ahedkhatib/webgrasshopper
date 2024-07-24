@@ -57,6 +57,10 @@ function NumberNode({id, data }) {
             const targetHandle = edge.targetHandle;
             updateNodeValue(targetNode.id, targetHandle, data.value);
           }
+          if (targetNode && targetNode.type === 'unitVector') {
+            const targetHandle = edge.targetHandle;
+            updateNodeValue(targetNode.id, 'value', data.value);
+          }
         }
       });
       setPrevData({value: data.value});

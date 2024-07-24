@@ -140,6 +140,36 @@ const OpenCascadeViewer = () => {
           const polyline = new THREE.Line(polylineGeometry, polylineMaterial);
           scene.add(polyline);
         }
+      } else if (node.type === 'unitVector') {
+        const { result } = node.data;
+        const directionVector = new THREE.Vector3(result[0], result[1], result[2]);
+        const origin = new THREE.Vector3(0, 0, 0);
+        const arrowHelper = new THREE.ArrowHelper(directionVector.clone().normalize(), origin, directionVector.length(), 0x0000ff);
+        scene.add(arrowHelper);
+      } else if (node.type === 'xyPlane') {
+        const { origin, normal } = node.data.plane;
+        const planeGeometry = new THREE.PlaneGeometry(10, 10);
+        const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
+        const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+        planeMesh.position.set(origin[0], origin[1], origin[2]);
+        planeMesh.rotation.x = Math.PI / 2; 
+        scene.add(planeMesh);
+      } else if (node.type === 'xzPlane') {
+        const { origin, normal } = node.data.plane;
+        const planeGeometry = new THREE.PlaneGeometry(10, 10);
+        const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
+        const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+        planeMesh.position.set(origin[0], origin[1], origin[2]);
+        planeMesh.rotation.z = Math.PI / 2; 
+        scene.add(planeMesh);
+      } else if (node.type === 'yzPlane') {
+        const { origin, normal } = node.data.plane;
+        const planeGeometry = new THREE.PlaneGeometry(10, 10);
+        const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
+        const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+        planeMesh.position.set(origin[0], origin[1], origin[2]);
+        planeMesh.rotation.y = Math.PI / 2; 
+        scene.add(planeMesh);
       }
     });
 

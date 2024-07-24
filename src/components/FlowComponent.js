@@ -15,6 +15,11 @@ import ClockNode from '../nodes/ClockNode';
 import CalenderNode from '../nodes/CalenderNode';
 import BooleanNode from '../nodes/BooleanNode';
 import PolylineNode from '../nodes/PolylineNode';
+import UnitVectorNode from '../nodes/UnitVectorNode';
+import XYPlaneNode from '../nodes/XYPlaneNode';
+import XZPlaneNode from '../nodes/XZPlaneNode';
+import YZPlaneNode from '../nodes/YZPlaneNode';
+import DistanceNode from '../nodes/DistanceNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
 
@@ -41,6 +46,11 @@ const nodeTypes = {
     calender: CalenderNode,
     boolean: BooleanNode,
     polyline: PolylineNode,
+    unitVector: UnitVectorNode,
+    xyPlane: XYPlaneNode,
+    xzPlane: XZPlaneNode,
+    yzPlane: YZPlaneNode,
+    distance: DistanceNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -349,6 +359,92 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addUnitVetorNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'unitVector',
+      data: {
+        direction: 'x',
+        value: 1,
+        result: [1, 0, 0],
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addXYPlaneNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'xyPlane',
+      data: {
+        origin: [0, 0, 0],
+        plane: { origin: [0, 0, 0], normal: [0, 0, 1] },
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addXZPlaneNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'xzPlane',
+      data: {
+        origin: [0, 0, 0],
+        plane: { origin: [0, 0, 0], normal: [0, 1, 0] },
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addYZPlaneNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'yzPlane',
+      data: {
+        origin: [0, 0, 0],
+        plane: { origin: [0, 0, 0], normal: [1, 0, 0] },
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addDistanceNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'distance',
+      data: {
+        pointA: [0, 0, 0],
+        pointB: [0, 0, 0],
+        distance: 0,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
 
   const onConnect = useCallback((params) => {
     setEdges((eds) => addEdge(params, eds));
@@ -392,6 +488,49 @@ function FlowComponent() {
                 node.data.center = [sourceData.x, sourceData.y, sourceData.z];
               }
             }
+            if(node.type === 'xyPlane') {
+              if (targetHandle === 'origin') {
+                node.data.origin = [sourceData.x, sourceData.y, sourceData.z];
+                const plane = {
+                  origin: node.data.origin,
+                  normal: [0, 0, 1],
+                };
+                updateNodeValue(node.id, 'plane', plane);
+              }
+            }
+            if(node.type === 'xzPlane') {
+              if (targetHandle === 'origin') {
+                node.data.origin = [sourceData.x, sourceData.y, sourceData.z];
+                const plane = {
+                  origin: node.data.origin,
+                  normal: [0, 1, 0],
+                };
+                updateNodeValue(node.id, 'plane', plane);
+              }
+            }
+            if(node.type === 'yzPlane') {
+              if (targetHandle === 'origin') {
+                node.data.origin = [sourceData.x, sourceData.y, sourceData.z];
+                const plane = {
+                  origin: node.data.origin,
+                  normal: [1, 0, 0],
+                };
+                updateNodeValue(node.id, 'plane', plane);
+              }
+            }
+            if (node.type === 'distance') {
+              if (targetHandle === 'pointA') {
+                node.data.pointA = [sourceData.x, sourceData.y, sourceData.z];
+              } else if (targetHandle === 'pointB') {
+                node.data.pointB = [sourceData.x, sourceData.y, sourceData.z];
+              }
+              const dist = Math.sqrt(
+                Math.pow(node.data.pointA[0] - node.data.pointB[0], 2) +
+                Math.pow(node.data.pointA[1] - node.data.pointB[1], 2) +
+                Math.pow(node.data.pointA[2] - node.data.pointB[2], 2)
+              );
+              updateNodeValue(node.id, 'distance', dist);
+            }
           }
           if (sourceNode && sourceNode.type === 'decimal') {
             const sourceData = sourceNode.data;
@@ -431,6 +570,9 @@ function FlowComponent() {
             }
             if (node.type === 'multiplication' ) {
               updateNodeValue(node.id, targetHandle, sourceData.value !== undefined ? sourceData.value : 1);
+            }
+            if (node.type === 'unitVector') {
+              updateNodeValue(node.id, 'value', sourceData.value);
             }
           }
           if (node.type === 'polyline') {
@@ -515,7 +657,53 @@ function FlowComponent() {
               .map(n => [n.data.x, n.data.y, n.data.z]);
 
             node.data = { ...node.data, points: connectedPoints };
-
+            } else if (node.type === 'unitVector') {
+              const connectedEdges = updatedEdges.filter(edge => edge.target === node.id);
+              if (connectedEdges.length === 0) {
+                node.data = { ...node.data, value: 1 };
+              }
+             } else if (node.type === 'xyPlane') {
+              const connectedEdges = updatedEdges.filter(edge => edge.target === node.id);
+              if (connectedEdges.length === 0) {
+                node.data = { ...node.data, origin: [0, 0, 0] };
+                const plane = {
+                  origin: [0, 0, 0],
+                  normal: [0, 0, 1],
+                };
+                node.data = { ...node.data, plane };
+              }
+            } else if (node.type === 'xzPlane') {
+              const connectedEdges = updatedEdges.filter(edge => edge.target === node.id);
+              if (connectedEdges.length === 0) {
+                node.data = { ...node.data, origin: [0, 0, 0] };
+                const plane = {
+                  origin: [0, 0, 0],
+                  normal: [0, 1, 0],
+                };
+                node.data = { ...node.data, plane };
+              }
+            } else if (node.type === 'yzPlane') {
+              const connectedEdges = updatedEdges.filter(edge => edge.target === node.id);
+              if (connectedEdges.length === 0) {
+                node.data = { ...node.data, origin: [0, 0, 0] };
+                const plane = {
+                  origin: [0, 0, 0],
+                  normal: [1, 0, 0],
+                };
+                node.data = { ...node.data, plane };
+              }
+            } else if (node.type === 'distance') {
+              if (targetHandle === 'pointA') {
+                node.data = { ...node.data, pointA: [0, 0, 0] };
+              } else if (targetHandle === 'pointB') {
+                node.data = { ...node.data, pointB: [0, 0, 0] };
+              }
+              const dist = Math.sqrt(
+                Math.pow(node.data.pointA[0] - node.data.pointB[0], 2) +
+                Math.pow(node.data.pointA[1] - node.data.pointB[1], 2) +
+                Math.pow(node.data.pointA[2] - node.data.pointB[2], 2)
+              );
+              updateNodeValue(node.id, 'distance', dist);
             }
 
           }
@@ -589,6 +777,21 @@ function FlowComponent() {
         </button>
         <button onClick={addPolylineNode} className="btn-add">
           Polyline
+        </button>
+        <button onClick={addUnitVetorNode} className="btn-add">
+          Unit Vector
+        </button>
+        <button onClick={addXYPlaneNode} className="btn-add">
+          XY plane
+        </button>
+        <button onClick={addXZPlaneNode} className="btn-add">
+          XZ plane
+        </button>
+        <button onClick={addYZPlaneNode} className="btn-add">
+          YZ plane
+        </button>
+        <button onClick={addDistanceNode} className="btn-add">
+          Distance
         </button>
       </div>
     </div>
