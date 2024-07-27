@@ -122,3 +122,21 @@
   flex-direction: column;
   align-items: center;
 }
+
+.colourNode {
+  display: flex;
+  flex-direction: coloumn;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size : 10px;
+}
+
+.colourNode table {
+  width: 100%;
+}
+
+.colourNode td {
+  padding: 2px 5px;
+}

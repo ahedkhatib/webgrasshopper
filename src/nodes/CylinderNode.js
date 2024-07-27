@@ -9,43 +9,54 @@ function CylinderNode({ id, data }) {
   const [height, setHeight] = useState(data.height || 1);
   const [center, setCenter] = useState(data.center || [0, 0, 0]);
 
-
   useEffect(() => {
-    edges.forEach((edge) => {
-      if (edge.target === id) {
+    const connectedEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'radius');
+    if (connectedEdges.length > 0) {
+      connectedEdges.forEach((edge) => {
         const sourceNode = nodes.find((n) => n.id === edge.source);
         if (sourceNode && sourceNode.type === 'decimal') {
-          if (edge.targetHandle === 'radius') {
-            const newRadius = sourceNode.data.value;
-            if (newRadius !== radius) {
-              setRadius(newRadius);
-              updateNodeValue(id, 'radius', newRadius);
-            }
-          } else if (edge.targetHandle === 'height') {
-            const newHeight = sourceNode.data.value;
-            if (newHeight !== height) {
-              setHeight(newHeight);
-              updateNodeValue(id, 'height', newHeight);
-            }
-          }
-        } else if (sourceNode && sourceNode.type === 'point') {
-          const newCenter = [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z];
-          if (JSON.stringify(newCenter) !== JSON.stringify(center)) {
-            setCenter(newCenter);
-            updateNodeValue(id, 'center', newCenter);
-          }
+          setRadius(sourceNode.data.value);
+          updateNodeValue(id, 'radius', sourceNode.data.value);
         }
-      }
-    });
-  }, [edges, nodes, id, radius, height, center, updateNodeValue]);
-
+      });
+    } else {
+      setRadius(0);
+      updateNodeValue(id, 'radius', 0);
+    }
+    const connectedEdges2 = edges.filter(edge => edge.target === id && edge.targetHandle === 'height');
+    if (connectedEdges2.length > 0) {
+      connectedEdges2.forEach((edge) => {
+        const sourceNode = nodes.find((n) => n.id === edge.source);
+        if (sourceNode && sourceNode.type === 'decimal') {
+          setHeight(sourceNode.data.value);
+          updateNodeValue(id, 'height', sourceNode.data.value);
+        }
+      });
+    } else {
+      setHeight(0);
+      updateNodeValue(id, 'height', 0);
+    }
+    const connectedEdges3 = edges.filter(edge => edge.target === id && edge.targetHandle === 'center');
+    if (connectedEdges3.length > 0) {
+      connectedEdges3.forEach((edge) => {
+        const sourceNode = nodes.find((n) => n.id === edge.source);
+        if (sourceNode && sourceNode.type === 'point') {
+          setCenter([sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
+          updateNodeValue(id, 'center', [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
+        }
+      });
+    } else {
+      setCenter([0, 0, 0]);
+      updateNodeValue(id, 'center', [0, 0, 0]);
+    }
+  }, [edges, nodes, id, updateNodeValue]);
 
   return (
     <div className={styles.customNode}>
       <div>Cylinder Node</div>
       <div>Radius: {radius}</div>
       <div>Height: {height}</div>
-      <div>Center</div>
+      <div>Center: {center.join(', ')}</div>
       <Handle type="target" position="left" id="radius" style={{ top: 70 }} />
       <Handle type="target" position="left" id="height" style={{ top: 90 }} />
       <Handle type="target" position="left" id="center" style={{ top: 110 }} />

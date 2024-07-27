@@ -4,8 +4,10 @@ import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
 
 function DecimalNode({ id, data }) {
-    const { edges, updateNodeValue } = useContext(NodesContext);
+    const { edges, updateNodeValue, nodes } = useContext(NodesContext);
     const [value, setValue] = useState(data.value || 0);
+    const [prevData, setPrevData] = useState({value: data.value});
+
     const [inputOptions, setInputOptions] = useState({
         min: data.min || 0,
         max: data.max || 10,
@@ -34,12 +36,26 @@ function DecimalNode({ id, data }) {
 
 
     useEffect(() => {
-        edges.forEach(edge => {
-            if (edges.source === id) {
-                updateNodeValue(edge.target, edge.targetHandle, value);
-            } 
+      if (prevData.value !== data.value) {
+        edges.forEach((edge) => {
+          if (edge.source === id) {
+            const targetNode = nodes.find((n) => n.id === edge.target);
+            if (targetNode && targetNode.type === 'cylinder') {
+              const targetHandle = edge.targetHandle;
+              if (targetHandle === 'radius') {
+                updateNodeValue(targetNode.id, 'radius', data.value);
+              }
+              if (targetHandle === 'height') {
+                updateNodeValue(targetNode.id, 'height', data.value);
+              }
+            }
+
+          }
         });
-    }, [value, data, edges, updateNodeValue, id]);
+
+        setPrevData({value: data.value});
+      }
+    }, [data.value, edges, id, nodes, updateNodeValue, prevData]);
 
 
     const handleChange = (event) => {

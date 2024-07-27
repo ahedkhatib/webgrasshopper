@@ -20,8 +20,10 @@ import XYPlaneNode from '../nodes/XYPlaneNode';
 import XZPlaneNode from '../nodes/XZPlaneNode';
 import YZPlaneNode from '../nodes/YZPlaneNode';
 import DistanceNode from '../nodes/DistanceNode';
+import ColourNode from '../nodes/ColourNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
+import Sidebar from './Sidebar';
 
 
 const edgeOptions = {
@@ -51,6 +53,7 @@ const nodeTypes = {
     xzPlane: XZPlaneNode,
     yzPlane: YZPlaneNode,
     distance: DistanceNode,
+    colour: ColourNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -446,6 +449,35 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addColourNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'colour',
+      data: {
+        alpha: 1.0,
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        colour: 'rgba(0, 0, 0, 1)',
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const computeColour = (alpha, x, y, z) => {
+    const r = x * 255;
+    const g = y * 255;
+    const b = z * 255;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+
+  
   const onConnect = useCallback((params) => {
     setEdges((eds) => addEdge(params, eds));
     setNodes((nds) =>
@@ -540,6 +572,19 @@ function FlowComponent() {
               } else if (targetHandle === 'height') {
                 node.data.height = sourceData.value;
               }
+            }
+            if (node.type === 'colour') {
+              if (targetHandle === 'alpha') {
+                node.data.alpha = sourceData.value;
+              } else if (targetHandle === 'x') {
+                node.data.x = sourceData.value;
+              } else if (targetHandle === 'y') {
+                node.data.y = sourceData.value;
+              } else if (targetHandle === 'z') {
+                node.data.z = sourceData.value;
+              }
+              const col = computeColour(node.data.alpha, node.data.x, node.data.y, node.data.z);
+              updateNodeValue(node.id, 'colour', col);
             }
           }
           if (sourceNode && sourceNode.type === 'custom') {
@@ -704,6 +749,18 @@ function FlowComponent() {
                 Math.pow(node.data.pointA[2] - node.data.pointB[2], 2)
               );
               updateNodeValue(node.id, 'distance', dist);
+            } else if (node.type === 'colour') {
+              if (targetHandle === 'alpha') {
+                node.data = { ...node.data, alpha: 1.0 };
+              } else if (targetHandle === 'x') {
+                node.data = { ...node.data, x: 0.0 };
+              } else if (targetHandle === 'y') {
+                node.data = { ...node.data, y: 0.0 };
+              } else if (targetHandle === 'z') {
+                node.data = { ...node.data, z: 0.0 };
+              }
+              const col = computeColour(node.data.alpha, node.data.x, node.data.y, node.data.z);
+              updateNodeValue(node.id, 'colour', col);
             }
 
           }
@@ -714,11 +771,33 @@ function FlowComponent() {
 
     return updatedEdges;
   });
-  }, [setEdges, setNodes, nodes]);
+  }, [setEdges, setNodes, nodes, updateNodeValue]);
 
   
   return (
     <div style={{ width: '100%', height: '100vh' }}>
+      <Sidebar
+        addNumberNode={addNumberNode}
+        addPointNode={addPointNode}
+        addLineNode={addLineNode}
+        addBoxNode={addBoxNode}
+        addCircleNode={addCircleNode}
+        addDecimalNode={addDecimalNode}
+        addCylinderNode={addCylinderNode}
+        addSphereNode={addSphereNode}
+        addAdditionNode={addAdditionNode}
+        addMultiplicationNode={addMultiplicationNode}
+        addClockNode={addClockNode}
+        addCalenderNode={addCalenderNode}
+        addBooleanNode={addBooleanNode}
+        addPolylineNode={addPolylineNode}
+        addUnitVetorNode={addUnitVetorNode}
+        addXYPlaneNode={addXYPlaneNode}
+        addXZPlaneNode={addXZPlaneNode}
+        addYZPlaneNode={addYZPlaneNode}
+        addDistanceNode={addDistanceNode}
+        addColourNode={addColourNode}
+      />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -735,65 +814,6 @@ function FlowComponent() {
         <Controls />
         <MiniMap />
       </ReactFlow>
-      <div className="button-container">
-        <button onClick={addNumberNode} className="btn-add">
-          Number
-        </button>
-        <button onClick={addPointNode} className="btn-add">
-          Point
-        </button>
-        <button onClick={addLineNode} className="btn-add">
-          Line
-        </button>
-        <button onClick={addCircleNode} className="btn-add">
-        Circle
-        </button>
-        <button onClick={ addBoxNode } className="btn-add">
-          Box
-        </button>
-        <button onClick={addDecimalNode} className="btn-add">
-          Decimal
-        </button>
-        <button onClick={addCylinderNode} className="btn-add">
-          Cylinder
-        </button>
-        <button onClick={addSphereNode} className="btn-add">
-          Sphere
-        </button>
-        <button onClick={addAdditionNode} className="btn-add">
-          Addition
-        </button>
-        <button onClick={addMultiplicationNode} className="btn-add">
-          Multiplication
-        </button>
-        <button onClick={addClockNode} className="btn-add">
-          Clock
-        </button>
-        <button onClick={addCalenderNode} className="btn-add">
-          Calender
-        </button>
-        <button onClick={addBooleanNode} className="btn-add">
-          Boolean
-        </button>
-        <button onClick={addPolylineNode} className="btn-add">
-          Polyline
-        </button>
-        <button onClick={addUnitVetorNode} className="btn-add">
-          Unit Vector
-        </button>
-        <button onClick={addXYPlaneNode} className="btn-add">
-          XY plane
-        </button>
-        <button onClick={addXZPlaneNode} className="btn-add">
-          XZ plane
-        </button>
-        <button onClick={addYZPlaneNode} className="btn-add">
-          YZ plane
-        </button>
-        <button onClick={addDistanceNode} className="btn-add">
-          Distance
-        </button>
-      </div>
     </div>
   );
 }
