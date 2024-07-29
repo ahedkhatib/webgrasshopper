@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { NodesContext } from '../context/NodesContext';
 
-const OpenCascadeViewer = () => {
+const ThreeViewer = () => {
   const mountRef = useRef(null);
   const { nodes } = useContext(NodesContext);
   const sceneRef = useRef(new THREE.Scene());
@@ -212,4 +212,4 @@ const OpenCascadeViewer = () => {
   return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
 };
 
-export default OpenCascadeViewer;
+export default ThreeViewer;

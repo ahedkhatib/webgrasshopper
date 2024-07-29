@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactFlowComponent from './components/ReactFlowComponent';
-import OpenCascadeViewer from './components/ThreeViewer';
+import ThreeViewer from './components/ThreeViewer';
 import Sidebar from './components/Sidebar';
 import './App.css';
 import { NodesProvider } from './context/NodesContext';
@@ -15,7 +15,7 @@ const App = () => {
           <ReactFlowComponent />
         </div>
         <div className="half">
-          <OpenCascadeViewer/>
+          <ThreeViewer/>
         </div>
       </div>
     </div>
