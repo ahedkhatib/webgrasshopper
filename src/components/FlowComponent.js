@@ -21,6 +21,9 @@ import XZPlaneNode from '../nodes/XZPlaneNode';
 import YZPlaneNode from '../nodes/YZPlaneNode';
 import DistanceNode from '../nodes/DistanceNode';
 import ColourNode from '../nodes/ColourNode';
+import TextNode from '../nodes/TextNode';
+import FitLineNode from '../nodes/FitLineNode';
+import DivideCurveNode from '../nodes/DivideCurveNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
 import Sidebar from './Sidebar';
@@ -54,6 +57,9 @@ const nodeTypes = {
     yzPlane: YZPlaneNode,
     distance: DistanceNode,
     colour: ColourNode,
+    text: TextNode,
+    fitLine: FitLineNode,
+    divideCurve: DivideCurveNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -469,6 +475,65 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addTextNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'text',
+      data: {
+        text: '',
+        onChange: (newText) => {
+          setNodes((nds) => 
+            nds.map((node) => {
+              if (node.id === id) {
+                return { ...node, data: { ...node.data, text: newText } };
+              }
+              return node;
+            })
+          );
+        },
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addFitLineNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'fitLine',
+      data: {
+        points: [],
+        line: null,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+  const addDivideCurveNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'divideCurve',
+      data: {
+        division: 10,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
   const computeColour = (alpha, x, y, z) => {
     const r = x * 255;
     const g = y * 255;
@@ -563,6 +628,7 @@ function FlowComponent() {
               );
               updateNodeValue(node.id, 'distance', dist);
             }
+          
           }
           if (sourceNode && sourceNode.type === 'decimal') {
             const sourceData = sourceNode.data;
@@ -761,8 +827,29 @@ function FlowComponent() {
               }
               const col = computeColour(node.data.alpha, node.data.x, node.data.y, node.data.z);
               updateNodeValue(node.id, 'colour', col);
+            } else if (node.type === 'fitLine') {
+              const connectedPoints = updatedEdges
+                .filter(e => e.target === node.id && e.targetHandle === 'points')
+                .map(e => nds.find(n => n.id === e.source && n.type === 'point'))
+                .filter(n => n)
+                .map(n => [n.data.x, n.data.y, n.data.z]);
+          
+              node.data = { ...node.data, points: connectedPoints };
+          
+              if (connectedPoints.length > 1) {
+                const xSum = connectedPoints.reduce((acc, point) => acc + point[0], 0);
+                const ySum = connectedPoints.reduce((acc, point) => acc + point[1], 0);
+                const zSum = connectedPoints.reduce((acc, point) => acc + point[2], 0);
+          
+                const centerX = xSum / connectedPoints.length;
+                const centerY = ySum / connectedPoints.length;
+                const centerZ = zSum / connectedPoints.length;
+          
+                node.data.line = { centerX, centerY, centerZ };
+              } else {
+                node.data.line = null;
+              }
             }
-
           }
         });
         return node;
@@ -797,6 +884,9 @@ function FlowComponent() {
         addYZPlaneNode={addYZPlaneNode}
         addDistanceNode={addDistanceNode}
         addColourNode={addColourNode}
+        addTextNode={addTextNode}
+        addFitLineNode={addFitLineNode}
+        addDivideCurveNode={addDivideCurveNode}
       />
       <ReactFlow
         nodes={nodes}

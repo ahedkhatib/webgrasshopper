@@ -8,6 +8,10 @@
   height: auto;
 }
 
+.nodeContent {
+  font-size: 12px;
+}
+
 .dialog {
   position: absolute;
   top: 10px;

@@ -18,7 +18,7 @@ const OpenCascadeViewer = () => {
     const scene = sceneRef.current;
 
     const camera = new THREE.PerspectiveCamera(75, mount.clientWidth / mount.clientHeight, 0.1, 1000);
-    camera.position.set(10, 10, 10);
+    camera.position.set(20, 20, 20);
     camera.lookAt(0, 0, 0);
     cameraRef.current = camera;
 
@@ -35,6 +35,8 @@ const OpenCascadeViewer = () => {
     transformControls.addEventListener('change', () => renderer.render(scene, camera));
     scene.add(transformControls);
     transformControlsRef.current = transformControls;
+
+    scene.background = new THREE.Color(0xd3d3d3);
 
     const axesHelper = new THREE.AxesHelper(10);
     scene.add(axesHelper);
@@ -147,7 +149,7 @@ const OpenCascadeViewer = () => {
         const arrowHelper = new THREE.ArrowHelper(directionVector.clone().normalize(), origin, directionVector.length(), 0x0000ff);
         scene.add(arrowHelper);
       } else if (node.type === 'xyPlane') {
-        const { origin, normal } = node.data.plane;
+        const { origin } = node.data.plane;
         const planeGeometry = new THREE.PlaneGeometry(10, 10);
         const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
         const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -155,7 +157,7 @@ const OpenCascadeViewer = () => {
         planeMesh.rotation.x = Math.PI / 2; 
         scene.add(planeMesh);
       } else if (node.type === 'xzPlane') {
-        const { origin, normal } = node.data.plane;
+        const { origin } = node.data.plane;
         const planeGeometry = new THREE.PlaneGeometry(10, 10);
         const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
         const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -163,19 +165,43 @@ const OpenCascadeViewer = () => {
         planeMesh.rotation.z = Math.PI / 2; 
         scene.add(planeMesh);
       } else if (node.type === 'yzPlane') {
-        const { origin, normal } = node.data.plane;
+        const { origin } = node.data.plane;
         const planeGeometry = new THREE.PlaneGeometry(10, 10);
         const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, opacity: 0.5, transparent: true });
         const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
         planeMesh.position.set(origin[0], origin[1], origin[2]);
         planeMesh.rotation.y = Math.PI / 2; 
         scene.add(planeMesh);
+      } else if (node.type === 'fitLine') {
+        const lineData = node.data.line;
+        if (lineData) {
+          const { centerX, centerY, centerZ } = lineData;
+          const geometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(centerX - 5, centerY, centerZ),
+            new THREE.Vector3(centerX + 5, centerY, centerZ),
+          ]);
+          const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+          const line = new THREE.Line(geometry, material);
+          scene.add(line);
+        }
+      } else if (node.type === 'divideCurve') {
+        const { points } = node.data;
+        if (points && points.length > 0) {
+          points.forEach(point => {
+            const pointGeometry = new THREE.SphereGeometry(0.1, 32, 32);
+            const pointMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+            const pointMesh = new THREE.Mesh(pointGeometry, pointMaterial);
+            pointMesh.position.set(point[0], point[1], point[2]);
+            scene.add(pointMesh);
+          });
+        }
       }
+      
     });
 
-    const axesHelper = new THREE.AxesHelper(10);
+    const axesHelper = new THREE.AxesHelper(20);
     scene.add(axesHelper);
-    const gridHelper = new THREE.GridHelper(20, 20);
+    const gridHelper = new THREE.GridHelper(100, 100);
     scene.add(gridHelper);
 
     const camera = cameraRef.current;
