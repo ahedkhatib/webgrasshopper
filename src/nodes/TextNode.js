@@ -11,12 +11,6 @@ function TextNode({ id, data }) {
     edges.forEach((edge) => {
       if (edge.source === id) {
         const targetNode = nodes.find((n) => n.id === edge.target);
-        if (targetNode && targetNode.type === 'circularDimension') {
-          const targetHandle = edge.targetHandle;
-          if (targetHandle === 'text') {
-            updateNodeValue(targetNode.id, 'text', text);
-          }
-        }
       }
     });
   }, [edges, nodes, id, text, updateNodeValue]);

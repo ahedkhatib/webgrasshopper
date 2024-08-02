@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import { Handle } from 'reactflow';
 import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
@@ -6,22 +6,46 @@ import { NodesContext } from '../context/NodesContext';
 function UnitVectorNode({ id, data }) {
   const { edges, updateNodeValue, nodes } = useContext(NodesContext);
   const [direction, setDirection] = useState(data.direction || 'x');
-  const [value, setValue] = useState(data.value || 1);
+  const [value, setValue] = useState(data.value !== undefined ? data.value : 1);
+  const prevEdgesRef = useRef(edges);
+  const prevNodesRef = useRef(nodes);
 
   useEffect(() => {
-    const connectedEdges = edges.filter(edge => edge.target === id);
-    if (connectedEdges.length > 0) {
-      connectedEdges.forEach((edge) => {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (sourceNode && sourceNode.type === 'custom') {
-          setValue(sourceNode.data.value);
-          updateNodeValue(id, 'value', sourceNode.data.value);
+    const updateValues = () => {
+      let foundValue = false;
+
+      edges.forEach((edge) => {
+        if (edge.target === id && edge.targetHandle === 'input') {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.type === 'custom') {
+            const newValue = sourceNode.data.value;
+            if (newValue !== undefined) {
+              setValue(newValue);
+              updateNodeValue(id, 'value', newValue);
+              foundValue = true;
+            }
+          }
         }
       });
-    } else {
-      setValue(1);
-      updateNodeValue(id, 'value', 1);
+
+      if (!foundValue) {
+        setValue(1);
+        updateNodeValue(id, 'value', 1);
+      }
+    };
+
+    const prevEdges = prevEdgesRef.current;
+    const prevNodes = prevNodesRef.current;
+
+    if (
+      JSON.stringify(edges) !== JSON.stringify(prevEdges) ||
+      JSON.stringify(nodes) !== JSON.stringify(prevNodes)
+    ) {
+      updateValues();
     }
+
+    prevEdgesRef.current = edges;
+    prevNodesRef.current = nodes;
   }, [edges, nodes, id, updateNodeValue]);
 
   useEffect(() => {
@@ -36,7 +60,10 @@ function UnitVectorNode({ id, data }) {
     updateNodeValue(id, 'result', result);
   }, [direction, value, id, updateNodeValue]);
 
- 
+  const handleDirectionChange = (newDirection) => {
+    setDirection(newDirection);
+    updateNodeValue(id, 'direction', newDirection);
+  };
 
   return (
     <div className={styles.customNode}>
@@ -51,10 +78,7 @@ function UnitVectorNode({ id, data }) {
               background: direction === 'x' ? 'blue' : 'white',
               color: direction === 'x' ? 'white' : 'black',
             }}
-            onClick={() => {
-              setDirection('x');
-              updateNodeValue(id, 'direction', 'x');
-            }}
+            onClick={() => handleDirectionChange('x')}
           >
             X
           </button>
@@ -66,10 +90,7 @@ function UnitVectorNode({ id, data }) {
               background: direction === 'y' ? 'blue' : 'white',
               color: direction === 'y' ? 'white' : 'black',
             }}
-            onClick={() => {
-              setDirection('y');
-              updateNodeValue(id, 'direction', 'y');
-            }}
+            onClick={() => handleDirectionChange('y')}
           >
             Y
           </button>
@@ -81,10 +102,7 @@ function UnitVectorNode({ id, data }) {
               background: direction === 'z' ? 'blue' : 'white',
               color: direction === 'z' ? 'white' : 'black',
             }}
-            onClick={() => {
-              setDirection('z');
-              updateNodeValue(id, 'direction', 'z');
-            }}
+            onClick={() => handleDirectionChange('z')}
           >
             Z
           </button>

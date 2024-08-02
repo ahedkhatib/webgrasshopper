@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Handle } from 'reactflow';
 import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
@@ -8,48 +8,80 @@ function CylinderNode({ id, data }) {
   const [radius, setRadius] = useState(data.radius || 1);
   const [height, setHeight] = useState(data.height || 1);
   const [center, setCenter] = useState(data.center || [0, 0, 0]);
+  const prevEdgesRef = useRef([]);
+  const prevNodesRef = useRef([]);
 
   useEffect(() => {
-    const connectedEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'radius');
-    if (connectedEdges.length > 0) {
-      connectedEdges.forEach((edge) => {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (sourceNode && sourceNode.type === 'decimal') {
-          setRadius(sourceNode.data.value);
-          updateNodeValue(id, 'radius', sourceNode.data.value);
+    const updateValues = () => {
+      let foundRadius = false;
+      let foundHeight = false; 
+      let foundCenter = false; 
+
+      edges.forEach((edge) => {
+        if (edge.target === id && edge.targetHandle === 'radius') {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.type === 'decimal') {
+            if(radius !== sourceNode.data.value) {
+              setRadius(sourceNode.data.value);
+              updateNodeValue(id, 'radius', sourceNode.data.value);
+            }
+            foundRadius = true;
+          }
+        } 
+        if (edge.target === id && edge.targetHandle === 'height') {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.type === 'decimal') {
+            if(height !== sourceNode.data.value) {
+              setHeight(sourceNode.data.value);
+              updateNodeValue(id, 'height', sourceNode.data.value);
+            }
+            foundHeight = true;
+          }
+        } 
+        if (edge.target === id && edge.targetHandle === 'center') {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.type === 'point') {
+            const newCenter = [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z];
+            if (JSON.stringify(center) !== JSON.stringify(newCenter)) {
+              setCenter(newCenter);
+              updateNodeValue(id, 'center', newCenter);
+            }
+            foundCenter = true;
+          }
         }
+
       });
-    } else {
-      setRadius(0);
-      updateNodeValue(id, 'radius', 0);
+
+      if (!foundRadius) {
+        setRadius(1);
+        updateNodeValue(id, 'radius', 1);
+      }
+
+      if (!foundHeight) {
+        setHeight(1);
+        updateNodeValue(id, 'height', 1);
+      }
+
+      if (!foundCenter) {
+        setCenter([0, 0, 0]);
+        updateNodeValue(id, 'center', [0, 0, 0]);
+      }
+    };
+
+    const prevEdges = prevEdgesRef.current;
+    const prevNodes = prevNodesRef.current;
+
+    if (
+      JSON.stringify(edges) !== JSON.stringify(prevEdges) ||
+      JSON.stringify(nodes) !== JSON.stringify(prevNodes)
+    ) {
+      updateValues();
     }
-    const connectedEdges2 = edges.filter(edge => edge.target === id && edge.targetHandle === 'height');
-    if (connectedEdges2.length > 0) {
-      connectedEdges2.forEach((edge) => {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (sourceNode && sourceNode.type === 'decimal') {
-          setHeight(sourceNode.data.value);
-          updateNodeValue(id, 'height', sourceNode.data.value);
-        }
-      });
-    } else {
-      setHeight(0);
-      updateNodeValue(id, 'height', 0);
-    }
-    const connectedEdges3 = edges.filter(edge => edge.target === id && edge.targetHandle === 'center');
-    if (connectedEdges3.length > 0) {
-      connectedEdges3.forEach((edge) => {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (sourceNode && sourceNode.type === 'point') {
-          setCenter([sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
-          updateNodeValue(id, 'center', [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
-        }
-      });
-    } else {
-      setCenter([0, 0, 0]);
-      updateNodeValue(id, 'center', [0, 0, 0]);
-    }
-  }, [edges, nodes, id, updateNodeValue]);
+
+    prevEdgesRef.current = edges;
+    prevNodesRef.current = nodes;
+  }, [edges, nodes, id, radius, data.radius, , height, setHeight, center, setCenter, updateNodeValue]);
+
 
   return (
     <div className={styles.customNode}>

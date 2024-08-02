@@ -4,73 +4,76 @@ import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
 
 function DecimalNode({ id, data }) {
-    const { edges, updateNodeValue, nodes } = useContext(NodesContext);
-    const [value, setValue] = useState(data.value || 0);
-    const [prevData, setPrevData] = useState({value: data.value});
+  const { edges, updateNodeValue, nodes} = useContext(NodesContext)
+  const [value, setValue] = useState(data.value || 0);
+  const [inputOptions, setInputOptions] = useState({
+    min: data.min || 0,
+    max: data.max || 10,
+    step: data.step || 0.1,
+    type: data.type || 'range',
+  });
+  const [open, setOpen] = useState(false);
+  const dialogRef = useRef(null);
+  const prevEdgesRef = useRef(edges);
+  const prevNodesRef = useRef(nodes);
 
-    const [inputOptions, setInputOptions] = useState({
-        min: data.min || 0,
-        max: data.max || 10,
-        step: data.step || 0.1,
-        type: data.type || 'range',
-    });
+  useEffect(() => {
+    const dialogNode = dialogRef.current;
 
-    const [open, setOpen] = useState(false);
-    const dialogRef = useRef(null);
+    if (dialogNode) {
+      dialogNode.addEventListener('cancel', () => {
+        setOpen(false);
+      });
 
-    useEffect(() => {
-        const dialogNode = dialogRef.current;
-    
-        if (dialogNode) {
-          dialogNode.addEventListener('cancel', () => {
-            setOpen(false);
-          });
-    
-          if (open) {
-            dialogNode.showModal();
-          } else {
-            dialogNode.close();
-          }
-        }
-      }, [open]);
-
-
-    useEffect(() => {
-      if (prevData.value !== data.value) {
-        edges.forEach((edge) => {
-          if (edge.source === id) {
-            const targetNode = nodes.find((n) => n.id === edge.target);
-            if (targetNode && targetNode.type === 'cylinder') {
-              const targetHandle = edge.targetHandle;
-              if (targetHandle === 'radius') {
-                updateNodeValue(targetNode.id, 'radius', data.value);
-              }
-              if (targetHandle === 'height') {
-                updateNodeValue(targetNode.id, 'height', data.value);
-              }
-            }
-
-          }
-        });
-
-        setPrevData({value: data.value});
+      if (open) {
+        dialogNode.showModal();
+      } else {
+        dialogNode.close();
       }
-    }, [data.value, edges, id, nodes, updateNodeValue, prevData]);
+    }
+  }, [open]);
 
-
-    const handleChange = (event) => {
-        const newValue = parseFloat(event.target.value);
-        setValue(newValue);
-        if ( data.onChange) {
-            data.onChange(newValue);
+  useEffect(() => {
+    const updateValue = () => {
+      edges.forEach((edge) => {
+        if (edge.target === id) {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.data.value !== undefined) {
+            setValue(sourceNode.data.value);
+            updateNodeValue(id, 'value', sourceNode.data.value);
+          }
         }
+      });
     };
 
-    function onCloseClick(e) {
-        if (e.target.tagName === "DIALOG") {
-          setOpen(false);
-        }
-      }
+    const prevEdges = prevEdgesRef.current;
+    const prevNodes = prevNodesRef.current;
+
+    if(
+      JSON.stringify(edges) !== JSON.stringify(prevEdges) ||
+      JSON.stringify(nodes) !== JSON.stringify(prevNodes)
+    ) {
+      updateValue();
+    }
+
+    prevEdgesRef.current = edges;
+    prevNodesRef.current = nodes;
+  }, [edges, nodes, id, updateNodeValue]);
+
+  const handleChange = (event) => {
+    const newValue = parseFloat(event.target.value, 10);
+    setValue(newValue);
+    updateNodeValue(id, 'value', newValue);
+    if (data.onChange) {
+      data.onChange(newValue); 
+    }
+  };
+
+  function onCloseClick(e) {
+    if (e.target.tagName === "DIALOG") {
+      setOpen(false);
+    }
+  }
 
     return (
         <div className={styles.customNode}>

@@ -83,10 +83,10 @@ const ThreeViewer = () => {
         pointMesh.position.set(x, y, z);
         scene.add(pointMesh);
       } else if (node.type === 'line') {
-        const { x1, y1, z1, x2, y2, z2 } = node.data;
+        const { pointA, pointB } = node.data;
         const points = [
-          new THREE.Vector3(x1, y1, z1),
-          new THREE.Vector3(x2, y2, z2),
+          new THREE.Vector3(pointA[0], pointA[1], pointA[2]),
+          new THREE.Vector3(pointB[0], pointB[1], pointB[2]),
         ];
         const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });

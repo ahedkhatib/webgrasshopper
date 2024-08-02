@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import { Handle } from 'reactflow';
 import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';
@@ -6,22 +6,41 @@ import { NodesContext } from '../context/NodesContext';
 function YZPlaneNode({ id, data }) {
   const { edges, updateNodeValue, nodes } = useContext(NodesContext);
   const [origin, setOrigin] = useState(data.origin || [0, 0, 0]);
+  const prevEdgesRef = useRef(edges);
+  const prevNodesRef = useRef(nodes);
 
   useEffect(() => {
-    const connectedEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'origin');
-    if (connectedEdges.length > 0) {
-      connectedEdges.forEach((edge) => {
-        const sourceNode = nodes.find((n) => n.id === edge.source);
-        if (sourceNode && sourceNode.type === 'point') {
-          setOrigin([sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
-          updateNodeValue(id, 'origin', [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
+    const updateOrigin = () => {
+
+      const connectedEdges = edges.filter(edge => edge.target === id && edge.targetHandle === 'origin');
+      if (connectedEdges.length > 0) {
+        connectedEdges.forEach((edge) => {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          if (sourceNode && sourceNode.type === 'point') {
+            setOrigin([sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
+            updateNodeValue(id, 'origin', [sourceNode.data.x, sourceNode.data.y, sourceNode.data.z]);
         }
       });
     } else {
       setOrigin([0, 0, 0]);
       updateNodeValue(id, 'origin', [0, 0, 0]);
+     }
+    };
+
+    const prevEdges = prevEdgesRef.current;
+    const prevNodes = prevNodesRef.current;
+
+    if(
+      JSON.stringify(edges) !== JSON.stringify(prevEdges) ||
+      JSON.stringify(nodes) !== JSON.stringify(prevNodes)
+    ) {
+      updateOrigin();
     }
+
+    prevEdgesRef.current = edges;
+    prevNodes.current = nodes;
   }, [edges, nodes, id, updateNodeValue]);
+    
 
   useEffect(() => {
     const plane = {
