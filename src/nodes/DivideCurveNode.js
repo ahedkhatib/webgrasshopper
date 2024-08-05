@@ -90,12 +90,12 @@ function DivideCurveNode({ id, data }) {
 
   return (
     <div className={styles.customNode}>
-      <div>Divide Curve Node</div>
+      <div>Divide Curve </div>
       <div>
         <label>Division: {division} </label>
       </div>
-      <Handle type="target" position="left" id="curve" style={{ top: 20 }} />
-      <Handle type="target" position="left" id="division" style={{ top: 40 }} />
+      <Handle type="target" position="left" id="curve" style={{ top: 43 }} />
+      <Handle type="target" position="left" id="division" style={{ top: 67 }} />
       <Handle type="source" position="right" id="points" style={{ top: '50%' }} />
     </div>
   );

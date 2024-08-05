@@ -64,13 +64,6 @@ function PointNode({ id, data }) {
     prevNodesRef.current = nodes;
   }, [edges, nodes, id, updateNodeValue]);
 
-  /*useEffect(() => {
-    if (x !== data.x || y !== data.y || z !== data.z) {
-      updateNodeValue(id, 'x', x);
-      updateNodeValue(id, 'y', y);
-      updateNodeValue(id, 'z', z);
-    }
-  }, [x, y, z, id, updateNodeValue, data.x, data.y, data.z]);*/
 
   return (
     <div className={styles.customNode}>

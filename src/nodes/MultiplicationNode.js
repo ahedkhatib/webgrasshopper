@@ -58,12 +58,12 @@ function MultiplicationNode({ id, data }) {
 
   return (
     <div className={styles.customNode}>
-      <div>Addition Node</div>
+      <div>Mul Node</div>
       <div>X: {data.x !== undefined ? data.x : 1}</div>
       <div>Y: {data.y !== undefined ? data.y : 1}</div>
       <div>Result: {(data.x !== undefined ? data.x : 1) * (data.y !== undefined ? data.y : 1)}</div>
-      <Handle type="target" position="left" id="x" style={{ top: 20 }} />
-      <Handle type="target" position="left" id="y" style={{ top: 60 }} />
+      <Handle type="target" position="left" id="x" style={{ top: 45 }} />
+      <Handle type="target" position="left" id="y" style={{ top: 70 }} />
       <Handle type="source" position="right" id="result" style={{ right: 0, top: '50%' }} />
     </div>
   );

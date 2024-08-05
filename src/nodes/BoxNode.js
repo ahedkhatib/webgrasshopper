@@ -73,8 +73,8 @@ function BoxNode({ id, data }) {
       <div>Box Node</div>
       <div>Point A: [{pointA[0]}, {pointA[1]}, {pointA[2]}]</div>
       <div>Point B: [{pointB[0]}, {pointB[1]}, {pointB[2]}]</div>
-      <Handle type="target" position="left" id="pointA" style={{ top: 20 }} />
-      <Handle type="target" position="left" id="pointB" style={{ top: 60 }} />
+      <Handle type="target" position="left" id="pointA" style={{ top: 44 }} />
+      <Handle type="target" position="left" id="pointB" style={{ top: 87 }} />
       <Handle type="source" position="right" id="output" style={{ right: 0, top: '50%' }} />
     </div>
   );

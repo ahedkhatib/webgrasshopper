@@ -74,8 +74,8 @@ function DistanceNode({ id, data }) {
 
   return (
     <div className={styles.customNode}>
-      <Handle type="target" position="left" id="pointA" style={{ left: 0, top: '30%' }} />
-      <Handle type="target" position="left" id="pointB" style={{ left: 0, top: '70%' }} />
+      <Handle type="target" position="left" id="pointA" style={{ left: 0, top: '20%' }} />
+      <Handle type="target" position="left" id="pointB" style={{ left: 0, top: '50%' }} />
       <div className={styles.distanceNode}>
         <div>Point A: {pointA.join(', ')}</div>
         <div>Point B: {pointB.join(', ')}</div>

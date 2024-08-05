@@ -62,8 +62,8 @@ function AdditionNode({ id, data }) {
       <div>X: {data.x || 0}</div>
       <div>Y: {data.y || 0}</div>
       <div>Result: {(data.x || 0) + (data.y || 0)}</div>
-      <Handle type="target" position="left" id="x" style={{ top: 20 }} />
-      <Handle type="target" position="left" id="y" style={{ top: 60 }} />
+      <Handle type="target" position="left" id="x" style={{ top: 67 }} />
+      <Handle type="target" position="left" id="y" style={{ top: 90 }} />
       <Handle type="source" position="right" id="result" style={{ right: 0, top: '50%' }} />
     </div>
   );
