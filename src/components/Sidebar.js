@@ -2,7 +2,7 @@ import React from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import '../App.css';
 
-const Sidebar = ({ addNumberNode, addPointNode, addLineNode, addCircleNode, addBoxNode, addDecimalNode, addCylinderNode, addSphereNode, addAdditionNode, addMultiplicationNode, addClockNode, addCalenderNode, addBooleanNode, addPolylineNode, addUnitVetorNode, addXYPlaneNode, addXZPlaneNode, addYZPlaneNode, addDistanceNode, addColourNode, addTextNode, addFitLineNode, addDivideCurveNode }) => {
+const Sidebar = ({ addNumberNode, addPointNode, addLineNode, addCircleNode, addBoxNode, addDecimalNode, addCylinderNode, addSphereNode, addAdditionNode, addMultiplicationNode, addClockNode, addCalenderNode, addBooleanNode, addPolylineNode, addUnitVetorNode, addXYPlaneNode, addXZPlaneNode, addYZPlaneNode, addDistanceNode, addColourNode, addTextNode, addFitLineNode, addDivideCurveNode, addPolygonEdgeNode, addPolylineCollapseNode, addMeshBoxNode }) => {
   return (
     <Menu>
       <ul className="bm-item-list">
@@ -29,6 +29,9 @@ const Sidebar = ({ addNumberNode, addPointNode, addLineNode, addCircleNode, addB
         <li><button onClick={addTextNode} className="bm-item">Text</button></li>
         <li><button onClick={addFitLineNode} className="bm-item">Fit Line</button></li>
         <li><button onClick={addDivideCurveNode} className="bm-item">Divide Curve</button></li>
+        <li><button onClick={addPolygonEdgeNode} className="bm-item">Plygon Edge</button></li>
+        <li><button onClick={addPolylineCollapseNode} className="bm-item">Polyline Collapse</button></li>
+        <li><button onClick={addMeshBoxNode} className="bm-item">Mesh Box</button></li>
       </ul>
     </Menu>
   );

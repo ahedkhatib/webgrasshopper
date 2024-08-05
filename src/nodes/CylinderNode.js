@@ -80,7 +80,7 @@ function CylinderNode({ id, data }) {
 
     prevEdgesRef.current = edges;
     prevNodesRef.current = nodes;
-  }, [edges, nodes, id, radius, data.radius, , height, setHeight, center, setCenter, updateNodeValue]);
+  }, [edges, nodes, id, radius, data.radius , height, setHeight, center, setCenter, updateNodeValue]);
 
 
   return (

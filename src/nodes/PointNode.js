@@ -20,15 +20,15 @@ function PointNode({ id, data }) {
       edges.forEach((edge) => {
         const sourceNode = nodes.find((n) => n.id === edge.source);
         if (sourceNode && sourceNode.type === 'custom') {
-          if (edge.targetHandle === 'x') {
+          if (edge.target === id && edge.targetHandle === 'x') {
             setX(sourceNode.data.value);
             updateNodeValue(id, 'x', sourceNode.data.value);
             foundX = true;
-          } else if (edge.targetHandle === 'y') {
+          } else if (edge.target === id && edge.targetHandle === 'y') {
             setY(sourceNode.data.value);
             updateNodeValue(id, 'y', sourceNode.data.value);
             foundY = true;
-          } else if (edge.targetHandle === 'z') {
+          } else if (edge.target === id && edge.targetHandle === 'z') {
             setZ(sourceNode.data.value);
             updateNodeValue(id, 'z', sourceNode.data.value);
             foundZ = true;
@@ -64,13 +64,13 @@ function PointNode({ id, data }) {
     prevNodesRef.current = nodes;
   }, [edges, nodes, id, updateNodeValue]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (x !== data.x || y !== data.y || z !== data.z) {
       updateNodeValue(id, 'x', x);
       updateNodeValue(id, 'y', y);
       updateNodeValue(id, 'z', z);
     }
-  }, [x, y, z, id, updateNodeValue, data.x, data.y, data.z]);
+  }, [x, y, z, id, updateNodeValue, data.x, data.y, data.z]);*/
 
   return (
     <div className={styles.customNode}>

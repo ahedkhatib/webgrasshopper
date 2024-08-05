@@ -195,7 +195,43 @@ const ThreeViewer = () => {
             scene.add(pointMesh);
           });
         }
-      }
+      } else if (node.type === 'polygonEdge') {
+        const { polygon } = node.data;
+        if (polygon && polygon.length > 2) {
+          const points = polygon.map(point => new THREE.Vector3(point[0], point[1], point[2]));
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+          const line = new THREE.LineLoop(geometry, material); 
+          scene.add(line);
+        }
+      } else if (node.type === 'polylineCollapse') {
+        const { collapsedPolyline } = node.data;
+        if (collapsedPolyline && collapsedPolyline.length > 1) {
+          const points = collapsedPolyline.map(point => new THREE.Vector3(point[0], point[1], point[2]));
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+          const line = new THREE.Line(geometry, material);
+          scene.add(line);
+        }
+      }  else if (node.type === 'meshBox' && node.data.box) {
+            const { pointA, pointB, xCount, yCount, zCount } = node.data.box;
+        
+            const width = Math.abs(pointB[0] - pointA[0]);
+            const height = Math.abs(pointB[1] - pointA[1]);
+            const depth = Math.abs(pointB[2] - pointA[2]);
+        
+            const geometry = new THREE.BoxGeometry(width, height, depth, xCount, yCount, zCount);
+            const material = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true }); 
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+              (pointA[0] + pointB[0]) / 2,
+              (pointA[1] + pointB[1]) / 2,
+              (pointA[2] + pointB[2]) / 2
+            );
+            scene.add(mesh);
+    }
+    
+    
       
     });
 

@@ -8,11 +8,6 @@ function TextNode({ id, data }) {
   const [text, setText] = useState(data.text || '');
 
   useEffect(() => {
-    edges.forEach((edge) => {
-      if (edge.source === id) {
-        const targetNode = nodes.find((n) => n.id === edge.target);
-      }
-    });
   }, [edges, nodes, id, text, updateNodeValue]);
 
   const handleChange = (event) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState, useRef } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import { Handle } from 'reactflow';
 import styles from './style.module.css';
 import { NodesContext } from '../context/NodesContext';

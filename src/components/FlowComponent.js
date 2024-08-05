@@ -24,6 +24,9 @@ import ColourNode from '../nodes/ColourNode';
 import TextNode from '../nodes/TextNode';
 import FitLineNode from '../nodes/FitLineNode';
 import DivideCurveNode from '../nodes/DivideCurveNode';
+import PolygonEdgeNode from '../nodes/PolygonEdgeNode';
+import PolylineCollapseNode from '../nodes/PolylineCollapseNode';
+import MeshBoxNode from '../nodes/MeshBoxNode';
 import { NodesContext } from '../context/NodesContext';
 import '../button.css';
 import Sidebar from './Sidebar';
@@ -60,6 +63,9 @@ const nodeTypes = {
     text: TextNode,
     fitLine: FitLineNode,
     divideCurve: DivideCurveNode,
+    polygonEdge : PolygonEdgeNode,
+    polylineCollapse: PolylineCollapseNode,
+    meshBox: MeshBoxNode,
 };
 
 const connectionLineStyle = { stroke: 'white' };
@@ -113,13 +119,13 @@ function FlowComponent() {
         x: 0,
         y: 0,
         z: 0,
-        onChange: (axis, value) => {
+        /*onChange: (axis, value) => {
           updateNodeValue(id, axis, value);
-        },
+        },*/
       },
     };
     setNodes((nds) => nds.concat(newNode));
-  }, [setNodes, updateNodeValue]);
+  }, [setNodes]);
 
   const addLineNode = useCallback(() => {
     const id = `${++nodeId}`;
@@ -511,6 +517,56 @@ function FlowComponent() {
     setNodes((nds) => nds.concat(newNode));
   }, [setNodes]);
 
+  const addPolygonEdgeNode = useCallback(() => {
+    const id = `${++nodeId}`;
+    const newNode = {
+      id,
+      position: {
+        x: Math.random() * 500,
+        y: Math.random() * 500,
+      },
+      type: 'polygonEdge',
+      data: {
+        polygon: [],
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+  }, [setNodes]);
+
+
+const addPolylineCollapseNode = useCallback(() => {
+  const id = `${++nodeId}`;
+  const newNode = {
+    id,
+    position: {
+      x: Math.random() * 500,
+      y: Math.random() * 500,
+    },
+    type: 'polylineCollapse',
+    data: {
+      collapsedPolyline: [],
+    },
+  };
+  setNodes((nds) => nds.concat(newNode));
+}, [setNodes]);
+
+const addMeshBoxNode = useCallback(() => {
+  const id = `${++nodeId}`;
+  const newNode = {
+    id,
+    position: {
+      x: Math.random() * 500,
+      y: Math.random() * 500,
+    },
+    type: 'meshBox',
+    data: {
+      box: null,
+    },
+  };
+  setNodes((nds) => nds.concat(newNode));
+}, [setNodes]);
+  
+
   const onConnect = useCallback((params) => {
     setEdges((eds) => addEdge(params, eds));
   }, [setEdges]);
@@ -549,6 +605,9 @@ function FlowComponent() {
         addTextNode={addTextNode}
         addFitLineNode={addFitLineNode}
         addDivideCurveNode={addDivideCurveNode}
+        addPolygonEdgeNode={addPolygonEdgeNode}
+        addPolylineCollapseNode={addPolylineCollapseNode}
+        addMeshBoxNode={addMeshBoxNode}
       />
       <ReactFlow
         nodes={nodes}
