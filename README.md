@@ -1,3 +1,21 @@
+# WebGrasshopper
+
+## Project Description
+
+This project integrates React Flow and Three.js to create an interactive 3D and 2D visualization platform. Users can add different types of nodes that represent geometric shapes and data points in a flowchart format. These nodes are then rendered in a 3D scene using Three.js, providing a dynamic and interactive experience.
+
+## Features
+
+* Add and manage nodes in a flowchart using React Flow.
+* Visualize nodes in a 3D scene using Three.js.
+* Interactive sidebar for easy addition of nodes.
+* Real-time synchronization between the flow diagram and 3D visualization.
+
+# Screenshots
+
+![alt text](image.png)
+![alt text](image-1.png)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
