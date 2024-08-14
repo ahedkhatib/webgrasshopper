@@ -38,7 +38,10 @@ function DivideCurveNode({ id, data }) {
           if (sourceNode) {
             foundCurve = true;
             if (sourceNode.type === 'line') {
-              const { x1, y1, z1, x2, y2, z2 } = sourceNode.data;
+              const { pointA, pointB } = sourceNode.data;
+              const [x1, y1, z1] = pointA;
+              const [x2, y2, z2] = pointB;
+              console.log('Line data:', {x1, y1, z1, x2, y2, z2});
               const newPoints = [];
               for (let i = 0; i <= division; i++) {
                 const t = i / division;
@@ -48,6 +51,7 @@ function DivideCurveNode({ id, data }) {
                   z1 * (1 - t) + z2 * t,
                 ]);
               }
+              console.log('New :', newPoints);
               setPoints(newPoints);
               updateNodeValue(id, 'points', newPoints);
             } else if (sourceNode.type === 'circle') {
