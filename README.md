@@ -86,3 +86,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Credits
+
+This project was developed at the Department of Computer Science at the University of Haifa, under the supervision of Prof. Roi Poranne for a course in computer graphics.
+
+## Libraries Used
+- [React](https://reactjs.org/) - For building the UI.
+- [React Flow](https://reactflow.dev/) - For managing the flow of nodes.
+- [Three.js](https://threejs.org) - For 3D rendering.
